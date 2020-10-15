@@ -15,6 +15,8 @@ public class RandomNumberDisplayer extends ASystem{
     private static String provider_Service_Response;
  //   private static Boolean isProviderTimeOut;
     static ASystem con;
+    static Service lookupservice;
+    static Service displayservice;
 
 
 
@@ -32,11 +34,14 @@ public class RandomNumberDisplayer extends ASystem{
         try {
 
             con = new RandomNumberDisplayer("localhost", 8480, "Display", "C");
+            lookupservice = new LookUpService(con, "LookUP", "/LookUP");
+
+
             String delimiter = ":";
 
             String service_Name_Orchestration = "Orchestrator";
-            con.lookupservice.transceive(service_Name_Orchestration);
-            String serverResponse = con.lookupservice.transceive();
+            lookupservice.transceive(service_Name_Orchestration);
+            String serverResponse = lookupservice.transceive();
 
             String[] tokensVal1 = serverResponse.split(delimiter);
             con.remoteIP =   (tokensVal1[0]).trim();
@@ -69,7 +74,9 @@ public class RandomNumberDisplayer extends ASystem{
                         con.sendPL(provider_Service_Request);
                         provider_Service_Response = con.receivePL();
                         try {
-                            con.service.transceive(provider_Service_Response);
+                            displayservice = new DisplayService(con, "Display", "/Display");
+
+                            displayservice.transceive(provider_Service_Response);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

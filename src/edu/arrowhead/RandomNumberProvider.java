@@ -13,6 +13,7 @@ public class RandomNumberProvider extends ASystem {
     private static String serviceToProvide = "Random Number with Time Stamp";
 
     static ASystem pro;
+    static Service rnservice;
 
 
 
@@ -28,6 +29,7 @@ public class RandomNumberProvider extends ASystem {
 
 
             pro = new RandomNumberProvider("localhost", 8460, "RN", "S");
+            rnservice = new RNService(pro, "RN", "/RN");
 
             System.out.println("Provider Started and listening to the port 8460");
 
@@ -37,25 +39,25 @@ public class RandomNumberProvider extends ASystem {
                 pro.connect();
 
 
-                pro.service_Request = pro.receivePL();
-                System.out.println("Message received from Consumer = " + pro.service_Request );
+                pro.payload = pro.receivePL();
+                System.out.println("Message received from Consumer = " + pro.payload );
 
 
                 try {
 
-                    pro.service.transceive("1:100");
+                    rnservice.transceive("1:100");
                     String s = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
 
-                    String serverResponse = "Number: " + pro.service.transceive() + "   TimeStamp: ";
+                    String serverResponse = "Number: " + rnservice.transceive() + "   TimeStamp: ";
                     serverResponse += s;
                     System.out.println("Message Sent to Consumer = " + serverResponse );
 
 
-                    if (pro.service_Request.equals(serviceToProvide)) {
+                    if (pro.payload.equals(serviceToProvide)) {
 
-                        pro.service_Response = serverResponse + " \n";
+                        pro.payload = serverResponse + " \n";
 
-                    } else if (!(pro.service_Request.equals(serviceToProvide))) {
+                    } else if (!(pro.payload.equals(serviceToProvide))) {
 
                         throw new Exception();
 
@@ -63,11 +65,11 @@ public class RandomNumberProvider extends ASystem {
 
 
                 } catch (Exception e) {
-                    pro.service_Response = "INVALID SERVICE REQUEST to Provider\n";
+                    pro.payload = "INVALID SERVICE REQUEST to Provider\n";
                 }
 
 
-                pro.sendPL(pro.service_Response);
+                pro.sendPL(pro.payload);
             }
         } catch (Exception e) {
             e.printStackTrace();

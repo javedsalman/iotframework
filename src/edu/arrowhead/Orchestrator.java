@@ -8,6 +8,7 @@ public class Orchestrator extends ASystem {
     static String serviceToOrchestrate = "randomNumberGenerator";
 
     static ASystem orc;
+    static Service lookupservice;
 
     public Orchestrator(String ipAddress, Integer ipPort, String serviceName, String role) throws IOException {
         super(ipAddress, ipPort, serviceName, role);
@@ -19,6 +20,7 @@ public class Orchestrator extends ASystem {
 
 
             orc = new Orchestrator("localhost", 8440, "LookUP", "S");
+            lookupservice = new LookUpService(orc, "LookUP", "/LookUP");
 
             System.out.println("Orchestrator Started and listening 8440");
 
@@ -26,14 +28,14 @@ public class Orchestrator extends ASystem {
                 orc.connect();
 
 
-                orc.service_Request = orc.receivePL();
-                System.out.println("Orchestration Request " +  orc.service_Request + " received from Random Numbner Displayer for Random Number Provider Address ");
+                orc.payload = orc.receivePL();
+                System.out.println("Orchestration Request " +  orc.payload + " received from Random Numbner Displayer for Random Number Provider Address ");
                 try {
 
-                    orc.service.transceive(serviceToOrchestrate);
-                    if (orc.service_Request.equals(serviceToOrchestrate)) {
-                        String serverResponse = orc.service.transceive();
-                        orc.service_Response = serverResponse + " \n";
+                    lookupservice.transceive(serviceToOrchestrate);
+                    if (orc.payload.equals(serviceToOrchestrate)) {
+                        String serverResponse = lookupservice.transceive();
+                        orc.payload = serverResponse + " \n";
 
 
 
@@ -46,11 +48,11 @@ public class Orchestrator extends ASystem {
 
 
                 } catch (Exception e) {
-                    orc.service_Response = "INVALID SERVICE REQUEST \n";
+                    orc.payload = "INVALID SERVICE REQUEST \n";
                 }
 
 
-                orc.sendPL(orc.service_Response);
+                orc.sendPL(orc.payload);
             }
         } catch (Exception e) {
             e.printStackTrace();

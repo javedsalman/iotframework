@@ -27,33 +27,26 @@ public abstract class ASystem {
     /**
      * The role of the System or ASystem (incumbent) performing, the role can be either ServerRole S (Providing the services) or ClientRole C (Consuming the services
      */
-    public  String role1;
+   // public  String role1;
     /**
      * Service request and response from the network
      */
 
-    public  String service_Response;
-    public  String service_Request;
+  //  public  String service_Response;
+  //  public  String service_Request;
+    public String payload;
     /**
      * The list of services
      */
-    Service rnservice;
-    Service lookupservice;
-    Service displayservice;
-    Service service;
+   // Service rnservice;
+   // Service lookupservice;
+    //Service displayservice;
+    //Service service;
     /**
      * Network Interface to connect over the network with other Systems and send and receive payload
      */
     NetworkInterface networkinterface;
 
-    /**
-     * default Constructor
-     * @throws IOException
-     */
-    public ASystem() throws IOException {
-
-        networkinterface = new ServerRole(ipAddress1, ipPort1, role1);
-    }
 
     /**
      * ASystem Constructor, it creates an network object either server or client based on the role of the System and also creates a service object based on service being provided or consumed by the incumbent system
@@ -66,18 +59,18 @@ public abstract class ASystem {
     public ASystem(String ipAddress, Integer ipPort, String serviceName, String role) throws IOException {
         this.ipAddress1 = ipAddress;
         this.ipPort1 = ipPort;
-        this.role1 = role;
+       // this.role1 = role;
         if (role.equals("S")) {
-            networkinterface = new ServerRole(ipAddress1, ipPort1, role1);
+            networkinterface = new ServerRole(ipAddress1, ipPort1, "S");
         }else if (role.equals("C")) {
-            networkinterface = new ClientRole(remoteIP, remotePort, role1);
+            networkinterface = new ClientRole(remoteIP, remotePort, "C");
         }
 
-        rnservice = new RNService(this, "RN", "/RN");
-        lookupservice = new LookUpService(this, "LookUP", "/LookUP");
-        displayservice = new DisplayService(this, "Display", "/Display");
+       // rnservice = new RNService(this, "RN", "/RN");
+       // lookupservice = new LookUpService(this, "LookUP", "/LookUP");
+       // displayservice = new DisplayService(this, "Display", "/Display");
 
-        if (serviceName.equals("RN")) {
+       /* if (serviceName.equals("RN")) {
             this.service = rnservice;
 
         } else if (serviceName.equals("LookUP")) {
@@ -88,7 +81,7 @@ public abstract class ASystem {
         else if (serviceName.equals("Display")) {
             this.service = displayservice;
 
-        }
+        }*/
 
 
     }
@@ -110,9 +103,9 @@ public abstract class ASystem {
 
     public  String receivePL() {
 
-        service_Request= networkinterface.receivePL();
+        payload= networkinterface.receivePL();
 
-            return service_Request;
+            return payload;
 
 
     }
